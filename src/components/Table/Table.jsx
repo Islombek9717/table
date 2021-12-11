@@ -6,29 +6,59 @@ class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {
-        status: "Table",
-        dataList: data,
-      },
+      active: null,
+      data: data,
+      name: "",
+      age: "",
+      address: "",
+      status: "",
+      nickname: "",
+      univ: "",
+      job: "",
     };
   }
   render() {
-    const onDelete = (id) => {
-      let res = this.state.data.dataList.filter((value) => value.id !== id);
-      this.setState({
-        data: {
-          ...this.state.data,
-          dataList: res,
-        },
-      });
-    };
-
     const onChange = (e) => {
       this.setState({
         [e.target.name]: e.target.value,
       });
     };
-    const onSave = (e) => {
+
+    const onEdit = (e) => {
+      this.setState({
+        name: e.name,
+        age: e.age,
+        address: e.address,
+        status: e.status,
+        nickname: e.nickname,
+        univ: e.univ,
+        job: e.job,
+        active: e.id,
+      });
+    };
+
+    const onChangeSave = () => {
+      const changedData = this.state.data.map((value) =>
+        value.id === this.state.active
+          ? {
+              ...value,
+              name: this.state.name,
+              age: this.state.age,
+              address: this.state.address,
+              status: this.state.status,
+              nickname: this.state.nickname,
+              univ: this.state.univ,
+              job: this.state.job,
+            }
+          : value
+      );
+      this.setState({
+        data: changedData,
+        active: null,
+      });
+    };
+
+    const onSave = () => {
       const newData = {
         id: Date.now(),
         name: this.state.name,
@@ -36,21 +66,29 @@ class Table extends React.Component {
         address: this.state.address,
         status: this.state.status,
         nickname: this.state.nickname,
-        university: this.state.university,
+        univ: this.state.univ,
         job: this.state.job,
       };
+
+      this.state.name.length
+        ? this.setState({
+            data: [...this.state.data, newData],
+
+            name: "",
+            age: "",
+            address: "",
+            status: "",
+            nickname: "",
+            univ: "",
+            job: "",
+          })
+        : alert("Pls fill all inputs");
+    };
+
+    const onDelete = (id) => {
+      let res = this.state.data.filter((value) => value.id !== id);
       this.setState({
-        data: {
-          ...this.state.data,
-          dataList: [...this.state.data.dataList, newData],
-        },
-        name: "",
-        age: "",
-        address: "",
-        status: "",
-        nickname: "",
-        university: "",
-        job: "",
+        data: res,
       });
     };
 
@@ -94,10 +132,10 @@ class Table extends React.Component {
             placeholder="Nickname"
           />
           <input
-            value={this.state.university}
+            value={this.state.univ}
             onChange={onChange}
             type="text"
-            name="university"
+            name="univ"
             placeholder="University"
           />
           <input
@@ -124,21 +162,93 @@ class Table extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.data.dataList.map((value, index) => (
-              <tr>
+            {this.state.data.map((value, index) => (
+              <tr key={value.id}>
                 <td>{index + 1}</td>
-                <td>{value.name}</td>
-                <td>{value.age}</td>
-                <td>{value.address}</td>
-                <td>{value.status}</td>
-                <td>{value.nickname}</td>
-                <td>{value.univ}</td>
-                <td>{value.job}</td>
                 <td>
-                  <button onClick={() => onDelete(value.id)}>DELETE</button>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="name"
+                      onChange={onChange}
+                      value={this.state.name}
+                    />
+                  ) : (
+                    value.name
+                  )}
                 </td>
                 <td>
-                  <button>EDIT</button>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="age"
+                      onChange={onChange}
+                      value={this.state.age}
+                    />
+                  ) : (
+                    value.age
+                  )}
+                </td>
+                <td>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="address"
+                      onChange={onChange}
+                      value={this.state.address}
+                    />
+                  ) : (
+                    value.address
+                  )}
+                </td>
+                <td>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="status"
+                      onChange={onChange}
+                      value={this.state.status}
+                    />
+                  ) : (
+                    value.status
+                  )}
+                </td>
+                <td>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="nickname"
+                      onChange={onChange}
+                      value={this.state.nickname}
+                    />
+                  ) : (
+                    value.nickname
+                  )}
+                </td>
+                <td>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="univ"
+                      onChange={onChange}
+                      value={this.state.univ}
+                    />
+                  ) : (
+                    value.univ
+                  )}
+                </td>
+                <td>
+                  {this.state.active === value.id ? (
+                    <input
+                      name="job"
+                      onChange={onChange}
+                      value={this.state.job}
+                    />
+                  ) : (
+                    value.job
+                  )}
+                </td>
+                <td>
+                  <button onClick={() => onDelete(value.id)}>DELETE</button>
+                  {this.state.active === value.id ? (
+                    <button onClick={onChangeSave}>SAVE</button>
+                  ) : (
+                    <button onClick={() => onEdit(value)}>EDIT</button>
+                  )}
                 </td>
               </tr>
             ))}
