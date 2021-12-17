@@ -1,8 +1,8 @@
 import React from "react";
 import "./Table.scss";
 import { data } from "../../Data/data";
-
-class Table extends React.Component {
+import { Table } from "./tableStyle";
+class TableList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,43 +18,35 @@ class Table extends React.Component {
     };
   }
   render() {
-    const onChange = (e) => {
+    const onEdit = (value) => {
       this.setState({
-        [e.target.name]: e.target.value,
+        active: value,
       });
     };
 
-    const onEdit = (e) => {
+    const onChange = (e) => {
+      const { value, name } = e.target;
       this.setState({
-        name: e.name,
-        age: e.age,
-        address: e.address,
-        status: e.status,
-        nickname: e.nickname,
-        univ: e.univ,
-        job: e.job,
-        active: e.id,
+        active: {
+          ...this.state.active,
+          [name]: value,
+        },
       });
     };
 
     const onChangeSave = () => {
       const changedData = this.state.data.map((value) =>
-        value.id === this.state.active
-          ? {
-              ...value,
-              name: this.state.name,
-              age: this.state.age,
-              address: this.state.address,
-              status: this.state.status,
-              nickname: this.state.nickname,
-              univ: this.state.univ,
-              job: this.state.job,
-            }
-          : value
+        value.id === this.state.active.id ? this.state.active : value
       );
       this.setState({
         data: changedData,
         active: null,
+      });
+    };
+
+    const onAdd = (e) => {
+      this.setState({
+        [e.target.name]: e.target.value,
       });
     };
 
@@ -98,165 +90,183 @@ class Table extends React.Component {
         <div className="inputs">
           <input
             value={this.state.name}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="name"
             placeholder="Name"
           />
           <input
             value={this.state.age}
-            onChange={onChange}
+            onChange={onAdd}
             type="number"
             name="age"
             placeholder="Age"
           />
           <input
             value={this.state.address}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="address"
             placeholder="Address"
           />
           <input
             value={this.state.status}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="status"
             placeholder="Status"
           />
           <input
             value={this.state.nickname}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="nickname"
             placeholder="Nickname"
           />
           <input
             value={this.state.univ}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="univ"
             placeholder="University"
           />
           <input
             value={this.state.job}
-            onChange={onChange}
+            onChange={onAdd}
             type="text"
             name="job"
             placeholder="Job"
           />
           <button onClick={onSave}>Add new item</button>
         </div>
-        <table>
-          <thead>
-            <tr className="table_header">
-              <th>ID</th>
-              <th>NAME</th>
-              <th>AGE</th>
-              <th>ADDRESS</th>
-              <th>STATUS</th>
-              <th>NICKNAME</th>
-              <th>UNIV</th>
-              <th>JOB</th>
-              <th colSpan="2">FUNCTIONS</th>
+        <Table>
+          <Table.Thead>
+            <tr>
+              <Table.Th>ID</Table.Th>
+              <Table.Th>NAME</Table.Th>
+              <Table.Th>AGE</Table.Th>
+              <Table.Th>ADDRESS</Table.Th>
+              <Table.Th>STATUS</Table.Th>
+              <Table.Th>NICKNAME</Table.Th>
+              <Table.Th>UNIV</Table.Th>
+              <Table.Th>JOB</Table.Th>
+              <Table.Th colSpan="2">FUNCTIONS</Table.Th>
             </tr>
-          </thead>
+          </Table.Thead>
           <tbody>
-            {this.state.data.map((value, index) => (
-              <tr key={value.id}>
-                <td>{index + 1}</td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="name"
-                      onChange={onChange}
-                      value={this.state.name}
-                    />
-                  ) : (
-                    value.name
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="age"
-                      onChange={onChange}
-                      value={this.state.age}
-                    />
-                  ) : (
-                    value.age
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="address"
-                      onChange={onChange}
-                      value={this.state.address}
-                    />
-                  ) : (
-                    value.address
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="status"
-                      onChange={onChange}
-                      value={this.state.status}
-                    />
-                  ) : (
-                    value.status
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="nickname"
-                      onChange={onChange}
-                      value={this.state.nickname}
-                    />
-                  ) : (
-                    value.nickname
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="univ"
-                      onChange={onChange}
-                      value={this.state.univ}
-                    />
-                  ) : (
-                    value.univ
-                  )}
-                </td>
-                <td>
-                  {this.state.active === value.id ? (
-                    <input
-                      name="job"
-                      onChange={onChange}
-                      value={this.state.job}
-                    />
-                  ) : (
-                    value.job
-                  )}
-                </td>
-                <td>
-                  <button onClick={() => onDelete(value.id)}>DELETE</button>
-                  {this.state.active === value.id ? (
-                    <button onClick={onChangeSave}>SAVE</button>
-                  ) : (
-                    <button onClick={() => onEdit(value)}>EDIT</button>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {this.state.data.map(
+              (
+                { id, name, age, address, status, nickname, univ, job },
+                index
+              ) => (
+                <tr key={index}>
+                  <Table.Td>{index + 1}</Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="name"
+                        onChange={onChange}
+                        value={this.state.active.name}
+                      />
+                    ) : (
+                      name
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="age"
+                        onChange={onChange}
+                        value={this.state.active.age}
+                      />
+                    ) : (
+                      age
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="address"
+                        onChange={onChange}
+                        value={this.state.active.address}
+                      />
+                    ) : (
+                      address
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="status"
+                        onChange={onChange}
+                        value={this.state.active.status}
+                      />
+                    ) : (
+                      status
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="nickname"
+                        onChange={onChange}
+                        value={this.state.active.nickname}
+                      />
+                    ) : (
+                      nickname
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="univ"
+                        onChange={onChange}
+                        value={this.state.active.univ}
+                      />
+                    ) : (
+                      univ
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {this.state.active?.id === id ? (
+                      <input
+                        name="job"
+                        onChange={onChange}
+                        value={this.state.active.job}
+                      />
+                    ) : (
+                      job
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    <button onClick={() => onDelete(id)}>DELETE</button>
+                    <button
+                      onClick={() => {
+                        this.state.active
+                          ? onChangeSave()
+                          : onEdit({
+                              id,
+                              name,
+                              age,
+                              address,
+                              status,
+                              nickname,
+                              univ,
+                              job,
+                            });
+                      }}
+                    >
+                      {this.state?.active?.id === id ? "SAVE" : "EDIT"}
+                    </button>
+                  </Table.Td>
+                </tr>
+              )
+            )}
           </tbody>
-        </table>
+        </Table>
       </div>
     );
   }
 }
 
-export default Table;
+export default TableList;
